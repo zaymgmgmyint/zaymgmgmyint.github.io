@@ -1,7 +1,10 @@
 import { experience, education, certifications } from "../data/portfolio";
+import { useInView } from "../hooks/useInView";
 import "./Experience.css";
 
 export default function Experience() {
+  const [layoutRef, inView] = useInView();
+
   return (
     <section id="experience" className="experience">
       <div className="container">
@@ -12,7 +15,7 @@ export default function Experience() {
           multiple industries and tech stacks.
         </p>
 
-        <div className="experience__layout">
+        <div ref={layoutRef} className={`experience__layout${inView ? " is-visible" : ""}`}>
           {/* Work */}
           <div className="experience__col">
             <h3 className="experience__col-heading">

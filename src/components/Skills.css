@@ -13,8 +13,18 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 28px;
-  transition: border-color 0.15s;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.15s;
 }
+
+.skills__grid.is-visible .skills__card { opacity: 1; transform: none; }
+.skills__grid.is-visible .skills__card:nth-child(1) { transition-delay: 0.05s; }
+.skills__grid.is-visible .skills__card:nth-child(2) { transition-delay: 0.1s; }
+.skills__grid.is-visible .skills__card:nth-child(3) { transition-delay: 0.15s; }
+.skills__grid.is-visible .skills__card:nth-child(4) { transition-delay: 0.2s; }
+.skills__grid.is-visible .skills__card:nth-child(5) { transition-delay: 0.25s; }
+.skills__grid.is-visible .skills__card:nth-child(6) { transition-delay: 0.3s; }
 
 .skills__card:hover {
   border-color: #c7d3f0;

@@ -1,7 +1,10 @@
 import { skills } from "../data/portfolio";
+import { useInView } from "../hooks/useInView";
 import "./Skills.css";
 
 export default function Skills() {
+  const [gridRef, inView] = useInView();
+
   return (
     <section id="skills" className="skills">
       <div className="container">
@@ -12,7 +15,7 @@ export default function Skills() {
           from backend systems to cloud integrations.
         </p>
 
-        <div className="skills__grid">
+        <div ref={gridRef} className={`skills__grid${inView ? " is-visible" : ""}`}>
           {skills.map((group) => (
             <div key={group.category} className="skills__card">
               <h3 className="skills__card-title">{group.category}</h3>
