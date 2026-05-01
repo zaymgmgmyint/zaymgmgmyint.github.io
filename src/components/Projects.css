@@ -42,6 +42,17 @@
   color: #fff;
 }
 
+[data-theme="dark"] .projects__filter--active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+[data-theme="dark"] .projects__filter--active:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
 .projects__filter-count {
   font-size: 11px;
   font-weight: 600;
@@ -81,6 +92,11 @@
 .projects__card:hover {
   border-color: #c7d3f0;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .projects__card:hover {
+  border-color: #4a6fa5;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Card top row */
