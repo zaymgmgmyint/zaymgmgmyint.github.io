@@ -30,6 +30,10 @@
   border-color: #c7d3f0;
 }
 
+[data-theme="dark"] .skills__card:hover {
+  border-color: #4a6fa5;
+}
+
 .skills__card-title {
   font-size: 13px;
   font-weight: 600;

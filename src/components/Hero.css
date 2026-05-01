@@ -121,6 +121,15 @@
   background: #374151;
 }
 
+[data-theme="dark"] .btn--primary {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+[data-theme="dark"] .btn--primary:hover {
+  background: #cbd5e1;
+}
+
 .btn--outline {
   background: transparent;
   color: var(--text-primary);
