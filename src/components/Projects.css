@@ -55,7 +55,12 @@
   gap: 12px;
 }
 
-/* Card entrance — staggered per card index */
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Cards hidden until section scrolls into view */
 .projects__card {
   background: var(--bg-white);
   border: 1px solid var(--border);
@@ -65,19 +70,12 @@
   flex-direction: column;
   gap: 12px;
   transition: border-color 0.15s, box-shadow 0.15s;
-  animation: cardIn 0.35s ease both;
-  animation-delay: calc(var(--i, 0) * 0.04s);
+  opacity: 0;
 }
 
-@keyframes cardIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.projects__grid.is-visible .projects__card {
+  animation: cardIn 0.4s ease both;
+  animation-delay: calc(var(--i, 0) * 0.05s);
 }
 
 .projects__card:hover {
@@ -156,6 +154,13 @@
 
 .projects__link:hover {
   gap: 8px;
+}
+
+.projects__link--disabled {
+  color: var(--text-light);
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 @media (max-width: 600px) {

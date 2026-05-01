@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { projects } from "../data/portfolio";
+import { useInView } from "../hooks/useInView";
 import "./Projects.css";
 
 const typeConfig = {
@@ -19,12 +20,13 @@ const types = ["All", ...Array.from(new Set(projects.map((p) => p.type)))];
 
 export default function Projects() {
   const [active, setActive] = useState("All");
+  const [sectionRef, inView] = useInView();
 
   const filtered =
     active === "All" ? projects : projects.filter((p) => p.type === active);
 
   return (
-    <section id="projects" className="projects">
+    <section ref={sectionRef} id="projects" className="projects">
       <div className="container">
         <span className="section-label">What I've Built</span>
         <h2 className="section-title">Projects</h2>
@@ -52,7 +54,7 @@ export default function Projects() {
           })}
         </div>
 
-        <div className="projects__grid" key={active}>
+        <div className={`projects__grid${inView ? " is-visible" : ""}`} key={active}>
           {filtered.map((project, i) => {
             const cfg = typeConfig[project.type] ?? { bg: "#f3f4f6", fg: "#374151" };
             return (
@@ -85,15 +87,10 @@ export default function Projects() {
                   ))}
                 </ul>
 
-                <a
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="projects__link"
-                >
+                <span className="projects__link projects__link--disabled" aria-disabled="true">
                   View Project
                   <ArrowIcon />
-                </a>
+                </span>
               </div>
             );
           })}
