@@ -66,7 +66,7 @@ export const education = [
   {
     year: "In Progress",
     institution: "NCC Education",
-    degree: "Level 5 Diploma in Computing with Data Science",
+    degree: "Level 5 Diploma in Computing (with Data Science)",
     current: true,
   },
   {
