@@ -1,0 +1,45 @@
+---
+// One hairline row. Pass `href` once the case study page exists (step 3).
+const { name, type, summary, href } = Astro.props;
+const Tag = href ? "a" : "div";
+---
+
+<Tag class="row" href={href}>
+  <div>
+    <h3 class="row__name">{name}</h3>
+    {summary && <p class="row__summary muted">{summary}</p>}
+  </div>
+  <span class="row__type muted">{type}</span>
+</Tag>
+
+<style>
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-3);
+    padding-block: var(--space-3);
+    border-top: 1px solid var(--line);
+    text-decoration: none;
+  }
+  .row__name {
+    margin: 0;
+  }
+  .row__summary {
+    margin: 0.25rem 0 0;
+    font-size: 0.9375rem;
+  }
+  .row__type {
+    font-size: 0.8125rem;
+    white-space: nowrap;
+  }
+  a.row:hover .row__name {
+    color: var(--accent);
+  }
+  @media (max-width: 40rem) {
+    .row {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+</style>

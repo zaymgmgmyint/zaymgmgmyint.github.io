@@ -1,0 +1,48 @@
+---
+import Base from "../layouts/Base.astro";
+import ProjectRow from "../components/ProjectRow.astro";
+import { posts } from "../data/writing.js";
+
+const fmt = new Intl.DateTimeFormat("en", { year: "numeric", month: "short" });
+---
+
+<Base title="Writing" description="Posts by Zay Maung Maung Myint, published on other platforms.">
+  <section class="container page fade-in">
+    <p class="eyebrow">Writing</p>
+    <h1>Writing</h1>
+    <p class="muted lead">Posts I've published on other platforms.</p>
+
+    {
+      posts.length > 0 ? (
+        <div class="list">
+          {posts.map((post) => (
+            <ProjectRow
+              name={post.title}
+              type={`${post.platform} · ${fmt.format(new Date(post.date))} · ${post.readTime}`}
+              href={post.url}
+            />
+          ))}
+        </div>
+      ) : (
+        <p class="muted empty">Nothing published yet. Posts will be listed here.</p>
+      )
+    }
+  </section>
+</Base>
+
+<style>
+  .page {
+    padding-top: var(--space-5);
+  }
+  .lead {
+    max-width: var(--measure);
+    font-size: 1.125rem;
+  }
+  .list {
+    margin-top: var(--space-4);
+    border-bottom: 1px solid var(--line);
+  }
+  .empty {
+    margin-top: var(--space-4);
+  }
+</style>

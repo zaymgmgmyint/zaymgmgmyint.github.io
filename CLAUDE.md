@@ -25,7 +25,7 @@ The mirror repo (`zaymmm/zaymmm.github.io`) is to be replaced by a redirect; don
 
 ## Working rules
 
-Branch `refactor/redesign` migrated the site from React + Vite to Astro. `REDESIGN.md` (untracked) is the handoff brief: decisions, site map, known content bugs and build order.
+Branch `refactor/redesign` migrated the site from React + Vite to Astro. `REDESIGN.md` is the handoff brief: decisions, site map, known content bugs and build order.
 - Stay on `refactor/redesign`; never touch `main`.
 - Do **not** run `git commit`/`push`/branch commands. The owner reviews diffs and commits.
 - Prefer small, reviewable steps: one page or section at a time.

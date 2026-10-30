@@ -1,0 +1,101 @@
+---
+import Base from "../layouts/Base.astro";
+import { site, skills, alsoUsed, education, certifications } from "../data/site.js";
+---
+
+<Base title="About" description={site.bio}>
+  <section class="container page fade-in">
+    <p class="eyebrow">About</p>
+    <h1>About</h1>
+    <p class="lead">{site.bio}</p>
+  </section>
+
+  <section class="container section">
+    <h2>Skills</h2>
+    <div class="rows">
+      {
+        skills.map((g) => (
+          <div class="row">
+            <h3>{g.category}</h3>
+            <p class="muted">{g.items.join(" · ")}</p>
+          </div>
+        ))
+      }
+    </div>
+    <p class="muted also">Also used earlier in my career: {alsoUsed.join(", ")}.</p>
+  </section>
+
+  <section class="container section">
+    <h2>Education</h2>
+    <div class="rows">
+      {
+        education.map((e) => (
+          <div class="row">
+            <h3>{e.degree}</h3>
+            <p class="muted">{e.institution} · {e.year}</p>
+          </div>
+        ))
+      }
+    </div>
+    <p class="muted also">Certifications: {certifications.join(", ")}.</p>
+  </section>
+
+  <section class="container section" id="contact">
+    <h2>Contact</h2>
+    <p class="muted lead">
+      The best way to reach me is email. I'm based in {site.location}.
+    </p>
+    <p class="actions">
+      <a class="btn" href={`mailto:${site.email}`}>{site.email}</a>
+      <a class="btn btn--ghost" href={site.github} rel="noopener noreferrer">GitHub</a>
+    </p>
+  </section>
+</Base>
+
+<style>
+  .page {
+    padding-top: var(--space-5);
+  }
+  .lead {
+    max-width: var(--measure);
+    font-size: 1.125rem;
+  }
+  .section {
+    padding-top: var(--space-5);
+  }
+  .rows {
+    margin-top: var(--space-3);
+    border-bottom: 1px solid var(--line);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 16rem 1fr;
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+    border-top: 1px solid var(--line);
+  }
+  .row h3,
+  .row p {
+    margin: 0;
+  }
+  .row h3 {
+    font-size: 1rem;
+    font-family: var(--font-body);
+  }
+  .also {
+    margin-top: var(--space-2);
+    font-size: 0.9375rem;
+  }
+  .actions {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    margin-top: var(--space-3);
+  }
+  @media (max-width: 40rem) {
+    .row {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+  }
+</style>

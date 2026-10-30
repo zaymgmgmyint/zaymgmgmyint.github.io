@@ -1,0 +1,183 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import ProjectRow from "../components/ProjectRow.astro";
+import { site, experience } from "../data/site.js";
+import { archive } from "../data/projects.js";
+import { posts } from "../data/writing.js";
+
+const featured = (await getCollection("work")).sort((a, b) => a.data.order - b.data.order);
+const latestPosts = posts.slice(0, 3);
+const stats = [
+  { value: "8+", label: "Years in software" },
+  { value: String(featured.length + archive.length), label: "Projects shipped" },
+  { value: "2", label: "Teams led: Dev and DevOps" },
+];
+---
+
+<Base>
+  <section class="container hero fade-in">
+    <p class="eyebrow">{site.title} · {site.location}</p>
+    <h1>{site.name}</h1>
+    <p class="hero__lead">{site.intro}</p>
+    <p class="hero__actions">
+      <a class="btn" href="#contact">Contact</a>
+      <a class="btn btn--ghost" href={site.github} rel="noopener noreferrer">GitHub</a>
+    </p>
+    <dl class="stats">
+      {
+        stats.map((s) => (
+          <div>
+            <dt class="muted">{s.label}</dt>
+            <dd>{s.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="container section">
+    <p class="eyebrow">Selected work</p>
+    <h2>Systems I've built and run</h2>
+    <div class="list">
+      {
+        featured.map((p) => (
+          <ProjectRow
+            name={p.data.title}
+            type={p.data.type}
+            summary={p.data.summary}
+            href={`/work/${p.id}`}
+          />
+        ))
+      }
+    </div>
+    <p class="more"><a href="/work">All work and archive →</a></p>
+  </section>
+
+  <section class="container section">
+    <p class="eyebrow">Experience</p>
+    <h2>Where I've worked</h2>
+    <div class="list">
+      {
+        experience.map((job) => (
+          <div class="job">
+            <span class="job__period muted">{job.period}</span>
+            <div>
+              <h3 class="job__role">{job.role}</h3>
+              <p class="job__company muted">{job.company}</p>
+              {job.note && <p class="job__note">{job.note}</p>}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  {
+    latestPosts.length > 0 && (
+      <section class="container section">
+        <p class="eyebrow">Writing</p>
+        <h2>Latest posts</h2>
+        <div class="list">
+          {latestPosts.map((post) => (
+            <ProjectRow
+              name={post.title}
+              type={`${post.platform} · ${post.readTime}`}
+              href={post.url}
+            />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="container section" id="contact">
+    <p class="eyebrow">Contact</p>
+    <h2>Let's talk</h2>
+    <p class="muted contact__text">
+      Open to conversations about engineering leadership, architecture and platform work.
+    </p>
+    <p class="contact__actions">
+      <a class="btn" href={`mailto:${site.email}`}>{site.email}</a>
+      <a class="btn btn--ghost" href={site.github} rel="noopener noreferrer">GitHub</a>
+    </p>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding-top: var(--space-6);
+  }
+  .hero__lead {
+    max-width: var(--measure);
+    font-size: 1.25rem;
+    color: var(--text-muted);
+  }
+  .hero__actions,
+  .contact__actions {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    margin-top: var(--space-4);
+  }
+  .stats {
+    display: flex;
+    gap: var(--space-5);
+    flex-wrap: wrap;
+    margin: var(--space-5) 0 0;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--line);
+  }
+  .stats div {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .stats dt {
+    font-size: 0.8125rem;
+  }
+  .stats dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+  .section {
+    padding-top: var(--space-6);
+  }
+  .list {
+    margin-top: var(--space-3);
+    border-bottom: 1px solid var(--line);
+  }
+  .more {
+    margin-top: var(--space-2);
+    font-size: 0.9375rem;
+  }
+  .job {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: var(--space-3);
+    padding-block: var(--space-3);
+    border-top: 1px solid var(--line);
+  }
+  .job__period {
+    font-size: 0.875rem;
+  }
+  .job__role,
+  .job__company,
+  .job__note {
+    margin: 0;
+  }
+  .job__company,
+  .job__note {
+    font-size: 0.9375rem;
+  }
+  .contact__text {
+    max-width: var(--measure);
+  }
+  @media (max-width: 40rem) {
+    .job {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+  }
+</style>

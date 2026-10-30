@@ -1,0 +1,111 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+
+export async function getStaticPaths() {
+  const studies = await getCollection("work");
+  return studies.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { title, type, summary, apps, stack, role, problem, outcome } = entry.data;
+const { Content } = await render(entry);
+
+// Story sections render only when filled in, so there are never empty headings.
+const story = [
+  { label: "Problem", text: problem },
+  { label: "My role", text: role },
+  { label: "Outcome", text: outcome },
+].filter((s) => s.text);
+---
+
+<Base title={title} description={summary}>
+  <article class="container case fade-in">
+    <p class="case__back"><a href="/work">← All work</a></p>
+    <p class="eyebrow">{type}</p>
+    <h1>{title}</h1>
+    <p class="case__summary muted">{summary}</p>
+
+    <dl class="case__meta">
+      {
+        apps.length > 0 && (
+          <div>
+            <dt class="muted">Delivered</dt>
+            <dd>{apps.join(" · ")}</dd>
+          </div>
+        )
+      }
+      {
+        stack.length > 0 && (
+          <div>
+            <dt class="muted">Stack</dt>
+            <dd>{stack.join(" · ")}</dd>
+          </div>
+        )
+      }
+    </dl>
+
+    {
+      story.map((s) => (
+        <section class="case__section">
+          <h2>{s.label}</h2>
+          <p>{s.text}</p>
+        </section>
+      ))
+    }
+
+    <div class="case__body">
+      <Content />
+    </div>
+  </article>
+</Base>
+
+<style>
+  .case {
+    padding-top: var(--space-5);
+    max-width: calc(var(--measure) + 3rem);
+  }
+  .case__back {
+    font-size: 0.875rem;
+    margin-bottom: var(--space-4);
+  }
+  .case__back a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+  .case__back a:hover {
+    color: var(--accent);
+  }
+  .case__summary {
+    font-size: 1.25rem;
+  }
+  .case__meta {
+    margin: var(--space-4) 0 0;
+    border-top: 1px solid var(--line);
+  }
+  .case__meta div {
+    display: grid;
+    grid-template-columns: 8rem 1fr;
+    gap: var(--space-2);
+    padding-block: var(--space-2);
+    border-bottom: 1px solid var(--line);
+  }
+  .case__meta dt,
+  .case__meta dd {
+    margin: 0;
+    font-size: 0.9375rem;
+  }
+  .case__section {
+    margin-top: var(--space-4);
+  }
+  .case__body {
+    margin-top: var(--space-4);
+  }
+  .case__body :global(h2) {
+    margin-top: var(--space-4);
+  }
+  .case__body :global(img) {
+    max-width: 100%;
+    height: auto;
+  }
+</style>

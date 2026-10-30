@@ -1,0 +1,300 @@
+/* Design tokens: cool near-black, soft off-white, ONE accent (slate blue). */
+:root {
+  --font-display: "Fraunces Variable", Georgia, serif;
+  --font-body: "Inter Variable", system-ui, sans-serif;
+
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2.5rem;
+  --space-5: 4rem;
+  --space-6: 7rem;
+
+  --measure: 42rem;
+  --width: 64rem;
+}
+
+/* Dark is the default; light is opt-in via the toggle. */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1114;
+  --text: #e9ecf0;
+  --text-muted: #99a1ad;
+  --line: #242830;
+  --accent: #7f9bc4;
+  --accent-text: #0f1114;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f4f6f9;
+  --text: #14171c;
+  --text-muted: #5a6370;
+  --line: #d5dbe4;
+  --accent: #3d5a8a;
+  --accent-text: #f4f6f9;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--space-2);
+}
+
+h1 { font-size: clamp(2.5rem, 6vw, 4rem); }
+h2 { font-size: clamp(1.75rem, 3.5vw, 2.25rem); }
+h3 { font-size: 1.25rem; }
+
+p { margin: 0 0 var(--space-2); }
+
+a {
+  color: inherit;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 0.2em;
+}
+a:hover { color: var(--accent); }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: var(--space-5) 0;
+}
+
+.container {
+  width: min(var(--width), 100% - 3rem);
+  margin-inline: auto;
+}
+
+.eyebrow {
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-2);
+}
+
+.muted { color: var(--text-muted); }
+
+.btn {
+  display: inline-block;
+  padding: 0.7rem 1.4rem;
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+.btn:hover { background: transparent; color: var(--accent); }
+.btn--ghost { background: transparent; color: var(--text); border-color: var(--line); }
+.btn--ghost:hover { border-color: var(--accent); }
+
+/* Subtle fade on load only. Content is never hidden waiting for scroll. */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.fade-in { animation: fade-in 0.6s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in { animation: none; }
+  * { transition: none !important; }
+}
+
+/* Shared small pieces: chips, code blocks, copy button */
+.chip {
+  display: inline-block;
+  padding: 0.15rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: none;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.8125rem;
+}
+button.chip { cursor: pointer; }
+button.chip:hover,
+button.chip[aria-pressed="true"] {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.astro-code,
+.astro-code span {
+  color: var(--shiki-dark);
+  background-color: transparent;
+}
+:root[data-theme="light"] .astro-code,
+:root[data-theme="light"] .astro-code span {
+  color: var(--shiki-light);
+}
+.astro-code {
+  margin: 0;
+  padding: var(--space-2);
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.copy-btn {
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8125rem;
+  padding: 0.2rem 0.7rem;
+}
+.copy-btn:hover { color: var(--text); border-color: var(--accent); }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  padding: 0.5rem 1rem;
+  background: var(--accent);
+  color: var(--accent-text);
+  text-decoration: none;
+  z-index: 100;
+}
+.skip-link:focus {
+  top: 1rem;
+  color: var(--accent-text);
+}
+main:focus-visible {
+  outline: none;
+}
+[id] {
+  scroll-margin-top: 1.5rem;
+}
+
+/* Command palette */
+.palette-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8125rem;
+  padding: 0.3rem 0.7rem;
+}
+.palette-trigger:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+.palette-trigger kbd {
+  font-family: inherit;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+/* The shortcut hint means nothing on a phone. */
+@media (max-width: 34rem) {
+  .palette-trigger kbd {
+    display: none;
+  }
+}
+
+.palette {
+  width: min(36rem, calc(100% - 2rem));
+  margin: 12vh auto auto;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text);
+}
+.palette::backdrop {
+  background: rgb(0 0 0 / 0.6);
+}
+.palette input {
+  width: 100%;
+  padding: 1rem;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+}
+.palette input:focus-visible {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+.palette__list {
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem;
+  max-height: 20rem;
+  overflow-y: auto;
+}
+.palette__list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.palette__list li.is-active {
+  background: var(--line);
+}
+.palette__kind {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+.palette__status {
+  margin: 0;
+  padding: 0.5rem 1rem 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+.palette__status:empty {
+  display: none;
+}

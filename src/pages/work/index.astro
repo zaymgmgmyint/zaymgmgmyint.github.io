@@ -1,0 +1,107 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import ProjectRow from "../../components/ProjectRow.astro";
+import { archive } from "../../data/projects.js";
+
+const studies = (await getCollection("work")).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base
+  title="Work"
+  description="Case studies and a full archive of projects by Zay Maung Maung Myint."
+>
+  <section class="container page fade-in">
+    <p class="eyebrow">Work</p>
+    <h1>Selected work</h1>
+    <p class="muted lead">
+      {studies.length} case studies, plus {archive.length} other projects in the archive below.
+    </p>
+
+    <div class="list">
+      {
+        studies.map((s) => (
+          <ProjectRow
+            name={s.data.title}
+            type={s.data.type}
+            summary={s.data.summary}
+            href={`/work/${s.id}`}
+          />
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="container archive">
+    <p class="eyebrow">Archive</p>
+    <h2>Other projects</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th scope="col">Project</th><th scope="col">Industry</th><th scope="col">Apps</th></tr>
+        </thead>
+        <tbody>
+          {
+            archive.map((p) => (
+              <tr>
+                <th scope="row">{p.name}</th>
+                <td>{p.type}</td>
+                <td class="muted">{p.items.join(", ")}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page {
+    padding-top: var(--space-5);
+  }
+  .lead {
+    max-width: var(--measure);
+    font-size: 1.125rem;
+  }
+  .list {
+    margin-top: var(--space-4);
+    border-bottom: 1px solid var(--line);
+  }
+  .archive {
+    padding-top: var(--space-6);
+  }
+  .table-wrap {
+    margin-top: var(--space-3);
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 0.85rem 1rem 0.85rem 0;
+    border-top: 1px solid var(--line);
+    vertical-align: top;
+  }
+  thead th {
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+  tbody th {
+    font-weight: 400;
+    white-space: nowrap;
+  }
+  tbody tr:last-child > * {
+    border-bottom: 1px solid var(--line);
+  }
+  @media (max-width: 40rem) {
+    tbody th {
+      white-space: normal;
+    }
+  }
+</style>

@@ -1,0 +1,35 @@
+---
+import { site } from "../data/site.js";
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <p class="muted">© {new Date().getFullYear()} {site.name} · {site.location}</p>
+    <p class="footer__links">
+      <a href={site.github} rel="noopener noreferrer">GitHub</a>
+      <a href={`mailto:${site.email}`}>Email</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--line);
+    margin-top: var(--space-6);
+    padding-block: var(--space-3);
+    font-size: 0.875rem;
+  }
+  .footer__inner {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+  .footer p {
+    margin: 0;
+  }
+  .footer__links {
+    display: flex;
+    gap: var(--space-3);
+  }
+</style>
