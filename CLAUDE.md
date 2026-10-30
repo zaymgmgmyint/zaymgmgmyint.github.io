@@ -4,72 +4,76 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-All commands run from `portfolio/`:
+All commands run from the repo root:
 
 ```bash
-npm run dev       # Vite dev server → http://localhost:5173
-npm run build     # Production build → dist/
+npm run dev       # Astro dev server → http://localhost:4321
+npm run build     # Static build → dist/
 npm run preview   # Serve the production build locally
-npm run lint      # ESLint (flat config via eslint.config.js)
+npm run lint      # ESLint (flat config via eslint.config.js; covers .js/.jsx only, not .astro)
 ```
 
-No test suite is configured.
+Node 22.12+ is required (Astro 7); `package.json` declares it under `engines`.
+
+No test suite is configured. Verify changes by running the dev server and checking the page.
 
 ## Deployment
 
-Two GitHub Pages repos are kept in sync — both use GitHub Actions (`.github/workflows/deploy.yml`):
+`.github/workflows/deploy.yml` builds (`npm ci && npm run build`, Node 22) and publishes `dist/` to GitHub Pages on push to **`master`** (or manual `workflow_dispatch`). The remote is `zaymgmgmyint/zaymgmgmyint.github.io` → https://zaymgmgmyint.github.io/.
 
-| Repo | Branch | URL |
-|---|---|---|
-| `zaymgmgmyint/zaymgmgmyint.github.io` | `main` | https://zaymgmgmyint.github.io/ |
-| `zaymmm/zaymmm.github.io` | `master` | https://zaymmm.github.io/ |
+The mirror repo (`zaymmm/zaymmm.github.io`) is to be replaced by a redirect; don't reintroduce the old `rsync` flow. That change belongs in the mirror repo, not here.
 
-**Workflow to deploy changes:**
-```bash
-# 1. Edit files in portfolio/
-# 2. Sync to deployment repo(s)
-rsync -av --exclude=node_modules --exclude=dist --exclude=.git portfolio/ zaymgmgmyint.github.io/
-# 3. Restore the zaymmm workflow branch (always master, not main)
-# 4. Commit and push — Actions auto-builds and deploys
-```
+## Working rules
 
-After each rsync to `zaymmm.github.io/`, restore its workflow trigger to `branches: [master]` since rsync overwrites it with `branches: [main]` from the portfolio source.
+Branch `refactor/redesign` migrated the site from React + Vite to Astro. `REDESIGN.md` (untracked) is the handoff brief: decisions, site map, known content bugs and build order.
+- Stay on `refactor/redesign`; never touch `main`.
+- Do **not** run `git commit`/`push`/branch commands. The owner reviews diffs and commits.
+- Prefer small, reviewable steps: one page or section at a time.
+
+All six redesign build steps are done. Outstanding content the owner still needs to supply:
+- Case-study stories (`problem`, `role`, `outcome` in `src/content/work/*.md` frontmatter).
+- LinkedIn URL and a résumé PDF (then add buttons in Hero/Contact).
+- `year` and `stack` per archive row, for extra columns in the Work table.
+- Hardware, editor and terminal groups for `src/data/uses.js`.
+- A review of the wiki snippets and glossary, which Claude drafted.
 
 ## Architecture
 
-Single-page React 19 + Vite app. No router — sections are anchor-linked (`#about`, `#skills`, `#projects`, `#experience`).
+Astro static site. React is used only for interactive islands (`ThemeToggle.jsx`, `CopyButton.jsx`, `CommandPalette.jsx`). Everything else is `.astro`.
 
-**Content** — `src/data/portfolio.js` is the single source of truth for all text and data: `personal`, `skills`, `experience`, `education`, `certifications`, and `projects`. All content edits go here, not inside components.
+- `src/pages/` — file-based routes. `index`, `work/index`, `work/[slug]`, `writing`, `wiki`, `uses`, `about` (all nav targets exist), plus `search.json.js`, a build-time endpoint the command palette fetches on first open.
+- `src/layouts/Base.astro` — `<head>` (title, canonical, Open Graph/Twitter tags), skip link, header, footer, and an inline script that sets `data-theme` before first paint.
+- `src/components/` — `Header`, `Footer`, `ProjectRow` (`.astro`) and the three `.jsx` islands. Styles are scoped inside each `.astro` file; shared pieces (chips, code blocks, palette, skip link) are in `global.css`.
+- `src/data/` — single source of truth for content, plain JS:
+  - `site.js`: name, title, intro, contact, nav, experience, skills, education, certifications.
+  - `projects.js`: the archive (projects without a case study). Case studies are Markdown in `src/content/work/`; wiki snippets and glossary terms are Markdown in `src/content/wiki/` (`type: snippet|term`; snippet code lives in frontmatter so the copy button gets raw text). Schemas in `src/content.config.ts`.
+  - `uses.js`: groups for the Uses page; a group renders only when it has items.
+  - `writing.js`: external posts (empty for now; the Home "Writing" section renders only when non-empty).
+- `src/styles/global.css` — design tokens and base styles.
 
-**Components** — each section has a co-located CSS file (`ComponentName.jsx` + `ComponentName.css`). Composition order in `App.jsx`: `Navbar → Hero → Skills → Projects → Experience → Footer`.
+Content rules:
+- Edit text and data in `src/data/`, not in components.
+- Facts everywhere: "Lead Software Engineer, 8+ years", Bangkok, Thailand. Don't invent outcomes, numbers or links; ask the owner. LinkedIn and résumé URLs are still missing, so no buttons for them exist yet.
+- Don't render dead links or disabled buttons. Add `href` to `ProjectRow` only when the target page exists.
 
-**Styling** — plain CSS with custom properties in `src/index.css` (`:root`). Global utility classes (`container`, `section-label`, `section-title`, `section-desc`, `.btn`) live in `index.css` / `App.css`. Component classes follow BEM-style naming (`hero__content`, `hero__actions`).
+## Theming
 
-**Icons** — all icons are inline SVG function components defined locally in the file that uses them. There is no icon library.
+Tokens live in `src/styles/global.css`: dark is the default on `:root`, light on `:root[data-theme="light"]`. Palette is slate blue: one accent (`--accent`), warm-free neutrals. Always use the CSS variables; never hardcode colors in components.
 
-**Hooks** — `src/hooks/`:
-- `useInView.js` — Intersection Observer for scroll-triggered animations. Returns `[ref, inView]`. Used by Skills, Projects, Experience.
-- `useTheme.js` — Light/dark mode toggle. Persists to `localStorage`, respects `prefers-color-scheme` on first visit. Applies `data-theme="dark"` to `<html>`. Used by Navbar.
+The inline script in `Base.astro` applies the saved theme (`localStorage` key `theme`) before paint. `ThemeToggle.jsx` reads and flips `data-theme` on `<html>` via `useSyncExternalStore`.
 
-## Theming (Light / Dark Mode)
-
-CSS variables are defined in `src/index.css` under `:root` (light) and `[data-theme="dark"]` (dark). When adding new components, use CSS variables — never hardcode colors.
-
-Dark mode overrides for elements that use `var(--text-primary)` as a background (which inverts in dark mode) must be explicitly handled:
-```css
-[data-theme="dark"] .btn--primary {
-  background: #e2e8f0;
-  color: #0f172a;
-}
-```
+Fonts are self-hosted via `@fontsource-variable/fraunces` (headings) and `@fontsource-variable/inter` (body).
 
 ## Animations
 
-- **Hero** — pure CSS staggered `heroFadeUp` / `heroSlideIn` keyframes on each child element (no JS).
-- **Skills cards** — `useInView` on `.skills__grid`; adds `is-visible` class; CSS transitions with `nth-child` stagger delays.
-- **Project cards** — `useInView` on `<section>`; adds `is-visible` to `.projects__grid`; `cardIn` keyframe plays with `--i` CSS variable stagger. Re-animates on filter change via `key={active}`.
-- **Experience columns** — `useInView` on `.experience__layout`; staggered CSS transitions on each `.experience__col`.
+Subtle fade on load only (`.fade-in`). Content must never be hidden waiting for a scroll animation. `prefers-reduced-motion` disables it.
 
-## Known TODOs
+## Search (Cmd+K)
 
-- All `link` fields in `projects` in `portfolio.js` are placeholder `"https://your-link-here.com"`. **"View Project" links are intentionally disabled** (rendered as `<span>` in `Projects.jsx:88`). To re-enable: change `<span>` back to `<a href={project.link} target="_blank" rel="noopener noreferrer">` and replace placeholder URLs in `portfolio.js`.
+`src/pages/search.json.js` emits a static index of nav pages, case studies, wiki entries and writing links at build time. `CommandPalette.jsx` (hydrated `client:idle`) fetches it on first open, scores matches by title then body, and navigates on Enter. Opens with Cmd/Ctrl+K, or `/` when focus is not in a field. Anything new that should be searchable must be added to the index endpoint.
+
+## Accessibility
+
+- Every colour pair meets WCAG AA (lowest is muted text in light mode at 5.62:1). Re-check contrast when changing tokens.
+- Skip link to `#main` is the first focusable element.
+- Wiki entries carry anchor ids so `/wiki#rbac` links work.
